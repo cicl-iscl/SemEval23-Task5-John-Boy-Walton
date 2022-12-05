@@ -1,0 +1,113 @@
+import pandas as pd
+from transformers import AutoTokenizer
+from random import shuffle
+import json
+
+from configure_model import DEFAULT_MODEL_NAME
+
+
+def read_json(path):
+    return [json.loads(i) for i in open(path)]
+
+# https://rajpurkar.github.io/SQuAD-explorer/
+# see https://www.tensorflow.org/datasets/catalog/squad
+def squad_format(path, mode='train'): # 'train' / 'test'
+
+    def retrieve_answer_starts(obs):
+        prefix_len = len(obs['targetTitle']) + 2 # we concatenate with ' - ' in between but will count the second ' ' later
+        return [
+            prefix_len + 
+            len(''.join(obs['targetParagraphs'][:paragraph_index])) + 
+            spoiler_start +
+            paragraph_index + 1 # because we concatenate title and paragraphs with ' ' in between
+            for paragraph_index, spoiler_start
+            in [spoiler_start_[0] for spoiler_start_ in obs['spoilerPositions']]
+        ]
+
+    def retrieve_answers(obs, mode=mode):
+        if mode == 'train':
+            return [{
+                'answer_start': spoiler_start,
+                'text': spoiler
+            } for spoiler, spoiler_start in zip(obs['spoiler'], retrieve_answer_starts(obs))]
+        elif mode == 'test':
+            return 'not available for predictions'
+
+    return pd.DataFrame([
+        {
+            'id': obs['uuid'], 
+            'title': obs['targetTitle'], 
+            'question': ' '.join(obs['postText']), 
+            'context': obs['targetTitle'] + ' - ' + (' '.join(obs['targetParagraphs'])), 
+            'answers': retrieve_answers(obs)
+        } for obs in read_json(path)
+        ])
+
+def from_squad(squad_data, tokenizer=AutoTokenizer.from_pretrained(DEFAULT_MODEL_NAME)):
+    inputs = tokenizer(
+        # will concatenate question and context
+        list(squad_data['question']),
+        list(squad_data['context']),
+        padding='max_length',
+        truncation='only_second',
+        return_offsets_mapping=True
+    )
+
+    # points to start and end indices of the tokens in the raw input
+    offset_mapping = inputs['offset_mapping']
+    answers = list(squad_data['answers'])
+    start_positions = []
+    end_positions = []
+
+    for i, offset in enumerate(offset_mapping):
+
+        offset_starts, offset_ends = [pair[0] for pair in offset], [pair[1] for pair in offset]
+        for answer in answers[i]:
+
+            answer_start_positions = []
+            answer_end_positions = []
+
+            start_char = answer['answer_start']
+            end_char = answer['answer_start'] + len(answer['text'])
+            # https://huggingface.co/docs/transformers/main_classes/tokenizer#transformers.BatchEncoding.sequence_ids
+                # None for special tokens added around or between sequences
+                # 0 for tokens corresponding to words in the first sequence ==> question
+                # 1 for tokens corresponding to words in the second sequence when a pair of sequences was jointly encoded ==> context
+            # e.g.  question --> ['CSL', qt0, qt1, qt2, 'CLS']
+            #       context --> ['CSL', ct0, ct1, ct2, ct3, ct4, 'CLS']
+            #       sequence is concatenation --> ['CSL', qt0, qt1, qt2, 'CLS', 'CSL', ct0, ct1, ct2, ct3, ct4, 'CLS']
+            #       apply padding --> ['CSL', qt0, qt1, qt2, 'CLS', 'CSL', ct0, ct1, ct2, ct3, ct4, 'CLS', 'PAD', 'PAD']
+            #       sequence_ids() --> [None, 0,   0,   0,    None,  None, 1,   1,   1,   1,   1,    None,  None,  None]
+            sequence_ids = inputs.sequence_ids(i)
+
+            context_start = sequence_ids.index(1) # the first token with label 1 ==> in context
+            context_end = len(sequence_ids) - 1 - sequence_ids.index(1) # the last (first in reverse) token with label 1 ==> in context
+
+            # (0, 0) if the answer is not fully inside the context (e.g. in case of truncation)
+            if not set(range(start_char, end_char)).issubset(set(range(offset_starts[context_start], offset_ends[context_end]))):
+                start_position = 0
+                end_position = 0
+            else: # otherwise it's the start and end token positions
+                # narrow the scope
+                while offset_starts[context_start] <= start_char: context_start += 1
+                start_position = context_start - 1
+                while offset_ends[context_end] >= end_char: context_end -= 1
+                end_position = context_end + 1
+
+            answer_start_positions.append(start_position)
+            answer_end_positions.append(end_position)
+
+        start_positions.append(answer_start_positions)
+        end_positions.append(answer_end_positions)
+
+    inputs['start_positions'] = start_positions
+    inputs['end_positions'] = end_positions
+    return inputs
+
+def split_dataset(dataset, test_size, use_shuffle=True):
+    N = len(dataset)
+    test_N = int(N * test_size)
+    indices = list(range(N))
+    if use_shuffle: shuffle(indices)
+    train_indices, test_indices = indices[:-test_N], indices[-test_N:]
+    return dataset.select(train_indices), dataset.select(test_indices)
