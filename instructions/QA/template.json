@@ -1,0 +1,10 @@
+{
+    "name": "name",
+    "use": true,
+    "input_model_path": "path",
+    "fine-tune": true,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "output_model_path": "path",
+    "notes": []
+}

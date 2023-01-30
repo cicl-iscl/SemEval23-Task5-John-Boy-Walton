@@ -1,0 +1,12 @@
+{
+    "name": "bert-large-uncased-whole-word-masking-finetuned-squad",
+    "use": true,
+    "input_model_path": "bert-large-uncased-whole-word-masking-finetuned-squad",
+    "fine-tune": false,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "output_model_path": "bert-large-uncased-whole-word-masking-finetuned-squad",
+    "notes": [
+        "Fine-tuned on SQuAD v1.0 out of the box."
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "name": "roberta-base-squad2",
+    "use": true,
+    "input_model_path": "deepset/roberta-base-squad2",
+    "fine-tune": false,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "output_model_path": "deepset/roberta-base-squad2",
+    "notes": [
+        "Fine-tuned on SQuAD v2.0 out of the box."
+    ]
+}
