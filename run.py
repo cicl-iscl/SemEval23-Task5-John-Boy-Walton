@@ -115,19 +115,19 @@ def run(
         if X_train is not None and not 'summarized' in X_train.column_names:
             X_train = X_train.map(
                 summarize, input_columns='context', batched=True, batch_size=batch_size, 
-                fn_kwargs={'model': model, 'tokenizer': tokenizer}
+                fn_kwargs={'summarizer': model, 'tokenizer': tokenizer}
             )
 
         if X_dev is not None and not 'summarized' in X_dev.column_names:
             X_dev = X_dev.map(
                 summarize, input_columns='context', batched=True, batch_size=batch_size,
-                fn_kwargs={'model': model, 'tokenizer': tokenizer}
+                fn_kwargs={'summarizer': model, 'tokenizer': tokenizer}
             )
 
         if X_test is not None and not 'summarized' in X_test.column_names:
             X_test = X_test.map(
                 summarize, input_columns='context', batched=True, batch_size=batch_size,
-                fn_kwargs={'model': model, 'tokenizer': tokenizer}
+                fn_kwargs={'summarizer': model, 'tokenizer': tokenizer}
             )
 
         if save_datasets:
@@ -241,14 +241,10 @@ def main():
 
     args = parser.parse_args()
 
-    # match args.preprocess_mode:
-    #     case '0': preprocess_train = True; preprocess_test = True # for initial training (and prediction) // webis22_original
-    #     case '1': preprocess_train = False; preprocess_test = True # for prediction after training        // webis22_run
-    #     case '2': preprocess_train = False; preprocess_test = False # for evaluation and tests            // webis22_summarized
-
-    if args.preprocess_mode == '0': preprocess_train = True; preprocess_test = True # for initial training (and prediction)   // webis22_original
-    elif args.preprocess_mode == '1': preprocess_train = False; preprocess_test = True # for prediction after training        // webis22_run
-    elif args.preprocess_mode == '2': preprocess_train = False; preprocess_test = False # for evaluation and tests            // webis22_summarized
+    match args.preprocess_mode:
+        case '0': preprocess_train = True; preprocess_test = True # for initial training (and prediction) // webis22_original
+        case '1': preprocess_train = False; preprocess_test = True # for prediction after training        // webis22_run
+        case '2': preprocess_train = False; preprocess_test = False # for evaluation and tests            // webis22_summarized
 
     X_train, X_dev, X_test = compose_datasets(args.input_dir, preprocess_train, preprocess_test)
 
