@@ -15,7 +15,7 @@ from downstream.classify import build_model as build_classifier, classify
 
 if torch.cuda.is_available():
     DEVICE = 'cuda'
-    torch.cuda.set_per_process_memory_fraction(0.5, 0) # so that torch doesn't allocate the whole RAM
+    torch.cuda.set_per_process_memory_fraction(0.8, 0) # so that torch doesn't allocate the whole RAM
     torch.cuda.empty_cache()
     gc.collect()
 else: DEVICE = 'cpu'
