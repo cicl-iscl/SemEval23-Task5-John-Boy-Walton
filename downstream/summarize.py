@@ -28,6 +28,6 @@ def summarize(texts, summarizer, tokenizer):
             add_special_tokens=True,
             return_tensors='pt'
         ).to(DEVICE)
-    output = summarizer.generate(max_new_tokens=64, **inputs)
+    with torch.no_grad(): output = summarizer.generate(max_new_tokens=64, **inputs)
     summarized = tokenizer.batch_decode(output, skip_special_tokens=True)
     return {'summarized': summarized} # datasets.Dataset.map() requires the function to return a dict
