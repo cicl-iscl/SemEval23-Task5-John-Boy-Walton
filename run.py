@@ -241,10 +241,14 @@ def main():
 
     args = parser.parse_args()
 
-    match args.preprocess_mode:
-        case '0': preprocess_train = True; preprocess_test = True # for initial training (and prediction) // webis22_original
-        case '1': preprocess_train = False; preprocess_test = True # for prediction after training        // webis22_run
-        case '2': preprocess_train = False; preprocess_test = False # for evaluation and tests            // webis22_summarized
+    # match args.preprocess_mode:
+    #     case '0': preprocess_train = True; preprocess_test = True # for initial training (and prediction) // webis22_original
+    #     case '1': preprocess_train = False; preprocess_test = True # for prediction after training        // webis22_run
+    #     case '2': preprocess_train = False; preprocess_test = False # for evaluation and tests            // webis22_summarized
+
+    if args.preprocess_mode == '0': preprocess_train = True; preprocess_test = True # for initial training (and prediction)   // webis22_original
+    elif args.preprocess_mode == '1': preprocess_train = False; preprocess_test = True # for prediction after training        // webis22_run
+    elif args.preprocess_mode == '2': preprocess_train = False; preprocess_test = False # for evaluation and tests            // webis22_summarized
 
     X_train, X_dev, X_test = compose_datasets(args.input_dir, preprocess_train, preprocess_test)
 
