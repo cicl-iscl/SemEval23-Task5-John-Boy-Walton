@@ -1,0 +1,10 @@
+build and push image:
+
+    $docker build --platform linux/amd64 chmod +x /WebSemble/run.py -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.1.amd .
+    $docker login -u tira-user-john-boy-walton -pg-4s1ebNLy1iqa2GwH7L registry.webis.de
+    $docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.0.1
+
+
+command on TIRA:
+
+    /run.py $inputDataset $outputDir
