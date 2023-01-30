@@ -56,7 +56,7 @@ def build_model(instruction, X_train=None, X_dev=None, mode='train'):
     return classifier
 
 
-def classify(classifier, X_test):
+def classify(X_test, classifier):
     inputs = classifier.tokenizer(
         X_test['text'],
         truncation=True,
