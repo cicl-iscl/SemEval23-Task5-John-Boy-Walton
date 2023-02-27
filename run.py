@@ -354,16 +354,6 @@ def main():
 
     X_train, X_dev, X_test = compose_datasets(args.input_dir, preprocess_train, preprocess_test, mode=args.mode)
 
-
-
-
-    X_test = X_test.select(range(1, 15))
-
-
-
-
-
-
     qa_dir = os.path.join(args.instructions_dir, 'QA') # 'instructions_local/QA'
     if not os.path.exists(qa_dir): 
         raise ValueError('There should be a \'/QA\' directory in the instructions directory.')
@@ -375,6 +365,26 @@ def main():
     if os.path.exists(postprocess_qargs_path):
         with open(postprocess_qargs_path) as f: postprocess_qargs = json.load(f)
     else: postprocess_qargs = {}
+
+    '''
+    % python3 run.py ./webis22_run ./out 2 -m train
+    On Apple M1, CPU:
+
+    deberta-v3-base-tasksource-nli
+    100%|████████████████████████████████████████████████████████████████████████████████| 200/200 [00:26<00:00,  7.60ba/s]
+    distilbert-base-uncased-webis22
+    100%|████████████████████████████████████████████████████████████████████████████████| 100/100 [00:06<00:00, 14.50ba/s]
+    bert-base-uncased-MNLI-webis22
+    100%|████████████████████████████████████████████████████████████████████████████████| 200/200 [00:18<00:00, 10.89ba/s]
+    roberta-base-squad2
+    100%|████████████████████████████████████████████████████████████████████████████████| 100/100 [04:14<00:00,  2.55s/ba]
+    bert-large-uncased-whole-word-masking-finetuned-squad
+    100%|████████████████████████████████████████████████████████████████████████████████| 100/100 [13:53<00:00,  8.34s/ba]
+    bart-base-webis22
+    100%|████████████████████████████████████████████████████████████████████████████████| 100/100 [14:15<00:00,  8.56s/ba]
+    distilbert-base-cased-distilled-squad
+    100%|████████████████████████████████████████████████████████████████████████████████| 100/100 [01:52<00:02,  1.13s/ba]
+    '''
 
     run(
         qa_instructions_dir=qa_dir,
@@ -393,7 +403,7 @@ def main():
     )
 
 
-# EXAMPLE USAGE: % python3 run.py webis22_run out -i instructions -p 1 -s True -save True -save_dir webis22_summarized
+# EXAMPLE USAGE: % python3 run.py ./webis22_run ./out 2 -i instructions_local -p 1 -s True -save True -save_dir ./webis22_summarized
 if __name__ == '__main__':
     main()
 
