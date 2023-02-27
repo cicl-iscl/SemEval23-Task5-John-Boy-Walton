@@ -1,0 +1,17 @@
+{
+    "name": "name",
+    "use": true,
+    "input_model_path": "path",
+    "fine-tune": true,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "input_column": "column_name",
+    "label_mapping": {
+        "label0": 0, 
+        "label1": 1
+    },
+    "test_batch_size": 8,
+    "output_model_path": "path",
+    "notes": [],
+    "url": "url"
+}
