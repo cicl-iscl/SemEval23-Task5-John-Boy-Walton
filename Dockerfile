@@ -11,7 +11,7 @@ RUN apt-get update &&\
 # making directory of app
 WORKDIR /WebSemble
 
-# copy contents elementwise to reduce layers size
+# copy contents elementwise to reduce layer sizes
 COPY ./downstream ./downstream
 COPY ./instructions_docker ./instructions_docker
 COPY ./models/bart-base-webis22 ./models/bart-base-webis22
@@ -27,6 +27,7 @@ COPY ./utils ./utils
 COPY ./run.py ./run.py
 COPY ./web_trainer.py ./web_trainer.py
 COPY ./requirements.txt ./requirements.txt
+COPY ./README.md ./README.md
 
 # install packages
 RUN pip install -r requirements.txt

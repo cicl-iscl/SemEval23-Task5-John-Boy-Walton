@@ -137,8 +137,8 @@ def run(
                 os.mkdir(saved_datasets_dir)
 
             if X_train is not None: X_train.to_json(os.path.join(saved_datasets_dir, 'train.jsonl'))
-            if X_dev is not None: X_dev.to_json(os.path.join(saved_datasets_dir, 'dev.jsonl'))
-            if X_test is not None: X_test.to_json(os.path.join(saved_datasets_dir, 'test.jsonl'))
+            if X_dev is not None: X_dev.to_json(os.path.join(saved_datasets_dir, 'validation.jsonl'))
+            if X_test is not None: X_test.to_json(os.path.join(saved_datasets_dir, 'input.jsonl'))
 
     if DEVICE == 'cuda': clean_cuda()
 
@@ -336,9 +336,9 @@ def main():
     parser.add_argument('-i', '--instructions_dir', required=False, default='./instructions_local')
     parser.add_argument('-p', '--preprocess_mode', required=False, default='1', choices=['0', '1', '2'])
     parser.add_argument('-m', '--mode', required=False, default='test', choices=['train', 'test'])
-    parser.add_argument('-s', '--summarize', required=False, default='False')
-    parser.add_argument('-oc', '--summarize_only_on_cuda', required=False, default='True')
-    parser.add_argument('-save', '--save_datasets', required=False, default='False')
+    parser.add_argument('-s', '--summarize', required=False, default='False', choices=['True', 'False'])
+    parser.add_argument('-oc', '--summarize_only_on_cuda', required=False, default='True', choices=['True', 'False'])
+    parser.add_argument('-save', '--save_datasets', required=False, default='False', choices=['True', 'False'])
     parser.add_argument('-save_dir', '--saved_datasets_dir', required=False, default='./webis22_summarized')
 
     args = parser.parse_args()
@@ -393,7 +393,7 @@ def main():
     )
 
 
-# EXAMPLE USAGE: python3 run.py webis22_run out -i instructions -p 1 -s True -save True -save_dir webis22_summarized
+# EXAMPLE USAGE: % python3 run.py webis22_run out -i instructions -p 1 -s True -save True -save_dir webis22_summarized
 if __name__ == '__main__':
     main()
 
