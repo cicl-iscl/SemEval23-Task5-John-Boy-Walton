@@ -1,0 +1,25 @@
+{
+    "name": "bert-base-uncased-MNLI-webis22",
+    "use": false,
+    "input_model_path": "textattack/bert-base-uncased-MNLI",
+    "fine-tune": true,
+    "training_kwargs": {
+        "output_dir": "flow/checkpoints/bert-base-uncased-MNLI-webis22",
+        "logging_dir": "flow/log/bert-base-uncased-MNLI-webis22",
+        "num_train_epochs": 6.25,
+        "per_device_train_batch_size": 4,
+        "per_device_eval_batch_size": 4
+    },
+    "trainer_kwargs": {},
+    "label_mapping": {
+        "phrase": 0, 
+        "passage": 1,
+        "multi": 2
+    },
+    "test_batch_size": 4,
+    "output_model_path": "/WebSemble/models/bert-base-uncased-MNLI-webis22",
+    "notes": [
+        "To be fine-tuned on Webis22."
+    ],
+    "url": "https://huggingface.co/textattack/bert-base-uncased-MNLI"
+}

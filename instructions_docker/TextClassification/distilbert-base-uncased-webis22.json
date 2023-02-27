@@ -1,0 +1,19 @@
+{
+    "name": "distilbert-base-uncased-webis22",
+    "use": true,
+    "input_model_path": "/WebSemble/models/distilbert-base-uncased-webis22",
+    "fine-tune": false,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "label_mapping": {
+        "phrase": 0, 
+        "passage": 1,
+        "multi": 2
+    },
+    "test_batch_size": 8,
+    "output_model_path": "/WebSemble/models/distilbert-base-uncased-webis22",
+    "notes": [
+        "Fine-tuned on Webis22."
+    ],
+    "url": "https://huggingface.co/distilbert-base-uncased"
+}

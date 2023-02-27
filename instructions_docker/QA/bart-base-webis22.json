@@ -1,0 +1,14 @@
+{
+    "name": "bart-base-webis22",
+    "use": true,
+    "input_model_path": "/WebSemble/models/bart-base-webis22",
+    "fine-tune": false,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "test_batch_size": 8,
+    "output_model_path": "/WebSemble/models/bart-base-webis22",
+    "notes": [
+        "Fine-tuned on Webis22."
+    ],
+    "url": "https://huggingface.co/facebook/bart-base"
+}

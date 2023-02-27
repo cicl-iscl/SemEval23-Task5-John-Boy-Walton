@@ -1,0 +1,23 @@
+{
+    "name": "distilbert-base-uncased-webis22",
+    "use": false,
+    "input_model_path": "distilbert-base-uncased",
+    "fine-tune": true,
+    "training_kwargs": {
+        "output_dir": "flow/checkpoints/distilbert-base-uncased-webis22",
+        "logging_dir": "flow/log/distilbert-base-uncased-webis22",
+        "num_train_epochs": 12.5
+    },
+    "trainer_kwargs": {},
+    "label_mapping": {
+        "phrase": 0, 
+        "passage": 1,
+        "multi": 2
+    },
+    "test_batch_size": 8,
+    "output_model_path": "/WebSemble/models/distilbert-base-uncased-webis22",
+    "notes": [
+        "To be fine-tuned on Webis22."
+    ],
+    "url": "https://huggingface.co/distilbert-base-uncased"
+}

@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 
+#region Imports
+
+    #region Import Notice
+
 import os, sys
 ROOT = os.path.dirname(__file__)
 depth = 1
 for _ in range(depth): ROOT = os.path.dirname(ROOT)
 sys.path.append(ROOT)
+
+    #endregion
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import torch
@@ -12,8 +18,12 @@ import os
 
 from web_trainer import *
 
+#endregion
+
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+
+#region Functional
 
 def fine_tune(instruction, X_train=None, X_dev=None):
     label_mapping = instruction['label_mapping']
@@ -36,9 +46,8 @@ def fine_tune(instruction, X_train=None, X_dev=None):
     ).configured
     trainer.train()
     dir_name = os.path.dirname(instruction['output_model_path'])
-    if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
-    trainer.save_model(instruction['output_model_path'])
+    if not os.path.exists(dir_name): os.mkdir(dir_name)
+    trainer.save_model(dir_name)
 
 
 def build_model(instruction, X_train=None, X_dev=None, mode='train'):
@@ -50,7 +59,7 @@ def build_model(instruction, X_train=None, X_dev=None, mode='train'):
         num_labels=len(label_mapping),
         label2id=label_mapping,
         id2label=id_mapping
-        ).to(DEVICE)
+    ).to(DEVICE)
     tokenizer = AutoTokenizer.from_pretrained(instruction['output_model_path'])
     classifier = pipeline('text-classification', model=model, tokenizer=tokenizer)
     return classifier
@@ -60,7 +69,7 @@ def classify(X_test, classifier):
     inputs = classifier.tokenizer(
         X_test['text'],
         truncation=True,
-        padding='max_length',
+        padding='longest', # True
         add_special_tokens=True,
         return_tensors='pt'
     ).to(DEVICE)
@@ -68,3 +77,5 @@ def classify(X_test, classifier):
     return {
         'logits': output['logits']
     } # datasets.Dataset.map() requires the function to return a dict
+
+#endregion

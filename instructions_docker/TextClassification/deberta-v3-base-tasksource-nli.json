@@ -1,0 +1,20 @@
+{
+    "name": "deberta-v3-base-tasksource-nli",
+    "use": true,
+    "input_model_path": "sileod/deberta-v3-base-tasksource-nli",
+    "fine-tune": false,
+    "training_kwargs": {},
+    "trainer_kwargs": {},
+    "label_mapping": {
+        "phrase": 0, 
+        "passage": 1,
+        "multi": 2
+    },
+    "test_batch_size": 4,
+    "output_model_path": "/WebSemble/models/deberta-v3-base-tasksource-nli",
+    "notes": [
+        "No fine-tuning needed: the model is a zero-shot LM.",
+        "Check out Hugging Face model card with our labels, it's really good :)"
+    ],
+    "url": "https://huggingface.co/sileod/deberta-v3-base-tasksource-nli"
+}

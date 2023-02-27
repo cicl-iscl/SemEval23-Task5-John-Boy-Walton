@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 
+#region Imports
+
+    #region Import Notice
+
 import os, sys
 ROOT = os.path.dirname(__file__)
 depth = 1
 for _ in range(depth): ROOT = os.path.dirname(ROOT)
 sys.path.append(ROOT)
+
+    #endregion
 
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 import torch
@@ -12,8 +18,12 @@ import os
 
 from web_trainer import *
 
+#endregion
+
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+
+#region Functional
 
 def fine_tune(instruction, X_train=None, X_dev=None):
     model = AutoModelForQuestionAnswering.from_pretrained(instruction['input_model_path']).to(DEVICE)
@@ -29,9 +39,8 @@ def fine_tune(instruction, X_train=None, X_dev=None):
     ).configured
     trainer.train()
     dir_name = os.path.dirname(instruction['output_model_path'])
-    if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
-    trainer.save_model(instruction['output_model_path'])
+    if not os.path.exists(dir_name): os.mkdir(dir_name)
+    trainer.save_model(dir_name)
 
 
 def build_model(instruction, X_train=None, X_dev=None, mode='train'):
@@ -42,13 +51,13 @@ def build_model(instruction, X_train=None, X_dev=None, mode='train'):
     return qa
 
 
-def answer(X_test, qa):
+def retrieve_answer(X_test, qa):
     inputs = qa.tokenizer(
         # will concatenate question and context
         list(X_test['question']),
         list(X_test['context']),
-        truncation='only_second',
-        padding='max_length',
+        truncation='only_second', # truncate only context
+        padding='longest', # True
         # return_offsets_mapping=True,
         add_special_tokens=True,
         return_tensors='pt'
@@ -58,3 +67,5 @@ def answer(X_test, qa):
         'start_logits': output['start_logits'],
         'end_logits': output['end_logits']
     } # datasets.Dataset.map() requires the function to return a dict
+
+#endregion
