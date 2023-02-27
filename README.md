@@ -2,13 +2,13 @@
 
 WebSemble is a model aiming to use an ensemble approach to solution of [Clickbait Challenge at SemEval 2023](https://pan.webis.de/semeval23/pan23-web/clickbait-challenge.html#evaluation).
 
-## How it works:
+## How it works
 * Summarize (optional);
 * Predict label either with summarized text or with title;
 * Retrieve spoiler;
 * Postprocess spoiler with predicted label.
 
-## Arguments:
+## Arguments
 
 | argument                             | description                                                                                                                                                                                                                                                                                                                                                                                                  | required / optional | values                     | default                  |
 |--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|----------------------------|--------------------------|
@@ -25,7 +25,7 @@ WebSemble is a model aiming to use an ensemble approach to solution of [Clickbai
 
 Example usage: `% python3 run.py webis22_run out -i instructions -p 1 -s True -save True -save_dir webis22_summarized`
 
-## Models:
+## Models
 
 ### Summarization
 
