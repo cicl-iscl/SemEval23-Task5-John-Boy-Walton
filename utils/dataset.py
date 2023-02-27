@@ -1,24 +1,35 @@
 #!/usr/bin/env python3
 
+#region Imports
+
+    #region Import Notice
+
 import os, sys
 ROOT = os.path.dirname(__file__)
 depth = 1
 for _ in range(depth): ROOT = os.path.dirname(ROOT)
 sys.path.append(ROOT)
 
+    #endregion
+
 from datasets import Dataset
 
 from utils.preprocess import squad_format, from_squad
 
+#endregion
 
-def compose_datasets(dir, preprocess_train=True, preprocess_test=True):
+
+#region Functional
+
+def compose_datasets(dir, preprocess_train=True, preprocess_test=True, mode='train'):
 
     # we have two cases here: or we read and preprocess provided datasets, 
     # or we use those preprocessed in advance
 
+    train_path = os.path.join(dir, 'train.jsonl')
+    dev_path = os.path.join(dir, 'validation.jsonl')
     if preprocess_train:
 
-        train_path = os.path.join(dir, 'train.jsonl')
         if os.path.exists(train_path):
 
             X_train = Dataset.from_pandas(
@@ -31,7 +42,6 @@ def compose_datasets(dir, preprocess_train=True, preprocess_test=True):
 
         else: X_train = None
             
-        dev_path = os.path.join(dir, 'validation.jsonl')
         if os.path.exists(train_path):
 
             X_dev = Dataset.from_pandas(
@@ -42,30 +52,24 @@ def compose_datasets(dir, preprocess_train=True, preprocess_test=True):
         else: X_dev = None, None
 
     else:
-
-        train_path = os.path.join(dir, 'train.jsonl')
         X_train = Dataset.from_json(train_path) if os.path.exists(train_path) else None
-
-        dev_path = os.path.join(dir, 'validation.jsonl')
         X_dev = Dataset.from_json(dev_path) if os.path.exists(dev_path) else None
 
 
+    test_path = os.path.join(dir, 'input.jsonl')
     if preprocess_test:
 
-        test_path = os.path.join(dir, 'input.jsonl')
         if os.path.exists(test_path):
 
             X_test = Dataset.from_pandas(
-                squad_format(test_path)
+                squad_format(test_path, mode=mode)
             )
-            X_test = X_test.map(from_squad, batched=True)
+            X_test = X_test.map(from_squad, batched=True, fn_kwargs={'mode': mode})
 
         else: X_test = None
 
-    else:
-
-        test_path = os.path.join(dir, 'input.jsonl')
-        X_test = Dataset.from_json(test_path) if os.path.exists(test_path) else None
+    else: X_test = Dataset.from_json(test_path) if os.path.exists(test_path) else None
         
-
     return X_train, X_dev, X_test
+
+#endregion

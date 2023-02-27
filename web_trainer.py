@@ -2,6 +2,16 @@
 
 #region Imports
 
+    #region Import Notice
+
+import os, sys
+ROOT = os.path.dirname(__file__)
+depth = 0
+for _ in range(depth): ROOT = os.path.dirname(ROOT)
+sys.path.append(ROOT)
+
+    #endregion
+
 from transformers import TrainingArguments, Trainer, \
                          AutoModelForQuestionAnswering, AutoModelForSequenceClassification, \
                          AutoTokenizer, DataCollatorWithPadding
@@ -16,8 +26,8 @@ from utils.postprocess import postprocess_qa, postprocess_classify
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-
-DEFAULT_MODEL_NAME = 'distilbert-base-uncased'
+DEFAULT_MODEL_NAME = './models/distilbert-base-uncased'
+# DEFAULT_MODEL_NAME = '/WebSemble/models/distilbert-base-uncased'
 
 
 #region BaseModels
@@ -55,10 +65,6 @@ class WebTrainingArgs(WebBase):
 
 @dataclass
 class WebTrainer(WebBase):
-
-    # device: str = field(
-    #     default=DEVICE
-    # )
 
     @property
     def configured(self):
@@ -106,7 +112,7 @@ class WebQATrainingArguments(WebTrainingArgs):
         metadata={'help': '‘no’, ‘epoch’ or ‘steps’.'}
     )
     eval_steps: int = field(
-        default=50,
+        default=250,
         metadata={'help': 'Number of update steps between two evaluations.'}
     )
     do_predict: bool = field(
@@ -117,7 +123,7 @@ class WebQATrainingArguments(WebTrainingArgs):
         metadata={'help': '‘no’, ‘epoch’ or ‘steps’.'}
     )
     save_steps: int = field(
-        default=100,
+        default=2500,
         metadata={'help': 'Number of updates steps before two checkpoint saves.'}
     )
     load_best_model_at_end: bool = field(
@@ -162,18 +168,6 @@ class WebQATrainingArguments(WebTrainingArgs):
     kwargs: dict = field(
         default_factory=lambda: {}
     )
-
-    # @property
-    # def asdict_(self): # can't use asdict(self) as we must handle **kwargs
-    #     return {
-    #         field: getattr(self, field)
-    #         for field in self.__dataclass_fields__.keys()
-    #         if not field == 'kwargs'
-    #     }
-
-    # @property
-    # def configured(self):
-    #     return TrainingArguments(**self.asdict_, **self.kwargs)
 
 
 @dataclass
@@ -269,18 +263,6 @@ class WebClassificationTrainingArguments(WebTrainingArgs):
         default_factory=lambda: {}
     )
 
-    # @property
-    # def asdict_(self): # can't use asdict(self) as we must handle **kwargs
-    #     return {
-    #         field: getattr(self, field)
-    #         for field in self.__dataclass_fields__.keys()
-    #         if not field == 'kwargs'
-    #     }
-
-    # @property
-    # def configured(self):
-    #     return TrainingArguments(**self.asdict_, **self.kwargs)
-
 #endregion
 
 
@@ -318,14 +300,13 @@ class PostTrainer(Trainer):
         if len(log_history):
             all_metrics = {**log_history[-1], **metrics}
             print(all_metrics)
-            # try:
-            #     self.save_metrics('eval', all_metrics)
-            # except: pass
+            # self.save_metrics('eval', all_metrics)
         return metrics
 
 
 # https://huggingface.co/deepset/roberta-base-squad2
-DEFAULT_QA_MODEL_NAME = 'deepset/roberta-base-squad2'
+DEFAULT_QA_MODEL_NAME = './models/roberta-base-squad2'
+# DEFAULT_QA_MODEL_NAME = '/WebSemble/models/roberta-base-squad2'
 @dataclass
 class WebQATrainer(WebTrainer):
     
@@ -364,25 +345,15 @@ class WebQATrainer(WebTrainer):
         default_factory=lambda: {}
     )
 
-    # @property
-    # def asdict_(self): # can't use asdict(self) as we must handle **kwargs
-    #     return {
-    #         field: getattr(self, field)
-    #         for field in self.__dataclass_fields__.keys()
-    #         if not field == 'kwargs'
-    #     }
-
-    # @property
-    # def configured(self):
-    #     return WebTrainer(**self.asdict_, **self.kwargs)
-
 
 # https://huggingface.co/google/pegasus-xsum
-DEFAULT_S2S_MODEL_NAME = 'google/pegasus-xsum'
+DEFAULT_S2S_MODEL_NAME = './models/pegasus-xsum'
+# DEFAULT_S2S_MODEL_NAME = '/WebSemble/models/pegasus-xsum'
 
 
 # https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english
-DEFAULT_CLASSIFICATION_MODEL_NAME = 'distilbert-base-uncased'
+DEFAULT_CLASSIFICATION_MODEL_NAME = './models/distilbert-base-uncased'
+# DEFAULT_CLASSIFICATION_MODEL_NAME = '/WebSemble/models/distilbert-base-uncased'
 @dataclass
 class WebClassificationTrainer(WebTrainer):
 
@@ -420,9 +391,5 @@ class WebClassificationTrainer(WebTrainer):
     kwargs: dict = field(
         default_factory=lambda: {}
     )
-
-    # @property
-    # def configured(self):
-    #     return WebTrainer(**self.asdict_, **self.kwargs)
 
 #endregion

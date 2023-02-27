@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 
+#region Imports
+
+    #region Import Notice
+
 import os, sys
 ROOT = os.path.dirname(__file__)
 depth = 1
 for _ in range(depth): ROOT = os.path.dirname(ROOT)
 sys.path.append(ROOT)
+
+    #endregion
 
 from transformers import AutoTokenizer
 import torch
@@ -13,10 +19,14 @@ import json
 
 from web_trainer import DEFAULT_MODEL_NAME
 
+#endregion
+
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-def read_json(path, batch_size=None):
+#region Functional
+
+def read_json(path):
     return [json.loads(i) for i in open(path)]
 
 
@@ -41,7 +51,7 @@ def squad_format(path, mode='train'): # 'train' / 'test'
                 'text': spoiler
             } for spoiler, spoiler_start in zip(obs['spoiler'], retrieve_answer_starts(obs))]
         elif mode == 'test':
-            return 'not available for predictions'
+            return 'not available'
 
     return pd.DataFrame([
         {
@@ -49,8 +59,9 @@ def squad_format(path, mode='train'): # 'train' / 'test'
             'title': obs['targetTitle'], 
             'question': ' '.join(obs['postText']), 
             'context': obs['targetTitle'] + ' - ' + (' '.join(obs['targetParagraphs'])), 
-            'answers': retrieve_answers(obs),
-            'label': obs['tags'][0] # doesn't belong to SQuAD for classification, will be ignored in QA but used in classification
+            'answers': retrieve_answers(obs, mode=mode),
+            # 'label' doesn't belong to SQuAD for classification, will be ignored in QA but used in classification
+            'label': obs['tags'][0] if mode == 'train' else 'not available'
         } for obs in read_json(path)
         ])
 
@@ -129,3 +140,5 @@ def from_squad(
         inputs['end_positions'] = end_positions
 
     return inputs
+
+#endregion

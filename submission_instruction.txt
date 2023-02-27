@@ -1,10 +1,33 @@
-build and push image:
+SUBTASK 1:
 
-    $docker build --platform linux/amd64 chmod +x /WebSemble/run.py -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.1.amd .
-    $docker login -u tira-user-john-boy-walton -pg-4s1ebNLy1iqa2GwH7L registry.webis.de
-    $docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.0.1
+-- build and push image:
+
+    % docker build --platform linux/amd64 -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.25.amd.1 .
+    % docker login -u tira-user-john-boy-walton -pg-4s1ebNLy1iqa2GwH7L registry.webis.de
+    % docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.25.amd.1
+
+-- run locally:
+
+    % docker run -d -p 80:80 --platform linux/amd64 registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.25.amd.1
+
+-- command on TIRA:
+
+    /WebSemble/run.py $inputDataset $outputDir 1
 
 
-command on TIRA:
 
-    /run.py $inputDataset $outputDir
+SUBTASK 2:
+
+-- build and push image:
+
+    % docker build --platform linux/amd64 -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.25.amd.2 .
+    % docker login -u tira-user-john-boy-walton -pg-4s1ebNLy1iqa2GwH7L registry.webis.de
+    % docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.25.amd.2
+
+-- run locally:
+
+    % docker run -d -p 80:80 --platform linux/amd64 registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.25.amd.2
+
+-- command on TIRA:
+
+    /WebSemble/run.py $inputDataset $outputDir 2

@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
 
+#region Imports
+
+    #region Import Notice
+
+import os, sys
+ROOT = os.path.dirname(__file__)
+depth = 1
+for _ in range(depth): ROOT = os.path.dirname(ROOT)
+sys.path.append(ROOT)
+
+    #endregion
+
 import numpy as np
 from nltk.translate.bleu_score import sentence_bleu
 from sklearn.metrics import accuracy_score
 
+#endregion
+
+
+#region Metrics
 
 def bleu(eval_preds):
     all_answers = [ref['answers'] for ref in eval_preds.label_ids]
@@ -24,3 +40,5 @@ def accuracy(eval_preds):
     pred = eval_preds.predictions
     acc = accuracy_score(true, pred)
     return {'eval_accuracy': acc}
+
+#endregion
