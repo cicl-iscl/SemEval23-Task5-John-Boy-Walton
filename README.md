@@ -50,22 +50,15 @@ Example usage: `% python3 run.py ./webis22_run ./out 2 -i instructions_local -p 
 
 On Apple M1, CPU:
 
-`
-deberta-v3-base-tasksource-nli
-100%|███████████████████████████████████████████| 200/200 [00:26<00:00,  7.60ba/s]
-distilbert-base-uncased-webis22
-100%|███████████████████████████████████████████| 100/100 [00:06<00:00, 14.50ba/s]
-bert-base-uncased-MNLI-webis22
-100%|███████████████████████████████████████████| 200/200 [00:18<00:00, 10.89ba/s]
-roberta-base-squad2
-100%|███████████████████████████████████████████| 100/100 [04:14<00:00,  2.55s/ba]
-bert-large-uncased-whole-word-masking-finetuned-squad
-100%|███████████████████████████████████████████| 100/100 [13:53<00:00,  8.34s/ba]
-bart-base-webis22
-100%|███████████████████████████████████████████| 100/100 [14:15<00:00,  8.56s/ba]
-distilbert-base-cased-distilled-squad
-100%|███████████████████████████████████████████| 100/100 [01:52<00:02,  1.13s/ba]
-`
+| model                                                 | number of batches | batch size | batches / s | execution time (mm:ss) |
+|-------------------------------------------------------|-------------------|------------|-------------|------------------------|
+| deberta-v3-base-tasksource-nli                        | 200               | 4          | 7.6         | 00:26                  |
+| distilbert-base-uncased                               | 100               | 8          | 14.5        | 00:06                  |
+| bert-base-uncased-MNLI                                | 200               | 4          | 10.89       | 00:18                  |
+| roberta-base-squad2                                   | 100               | 8          | 0.39        | 04:14                  |
+| bert-large-uncased-whole-word-masking-finetuned-squad | 100               | 8          | 0.12        | 13:53                  |
+| bart-base                                             | 100               | 8          | 0.12        | 14:15                  |
+| distilbert-base-cased-distilled-squad                 | 100               | 8          | 0.88        | 01:52                  |
 
 ## Evaluation
 
