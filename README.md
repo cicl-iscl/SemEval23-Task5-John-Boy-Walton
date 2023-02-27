@@ -23,7 +23,7 @@ WebSemble is a model aiming to use an ensemble approach to solution of [Clickbai
 | `-save`, `--save_datasets`           | Whether to save datasets after preprocessing. Ignored if `summarize=="False"`.                                                                                                                                                                                                                                                                                                                               | optional            | one of `"True"`, `"False"` | `"False"`                |
 | `-save_dir`, `--saved_datasets_dir`  | Directory to save datasets after preprocessing to. Ignored if `save_datasets=="False"` or `summarize=="False"`.                                                                                                                                                                                                                                                                                              | optional            | any `str`                  | `"./webis22_summarized"` |
 
-Example usage: `% python3 run.py webis22_run out -i instructions -p 1 -s True -save True -save_dir webis22_summarized`
+Example usage: `% python3 run.py ./webis22_run ./out 2 -i instructions_local -p 1 -s True -save True -save_dir ./webis22_summarized`
 
 ## Models
 
