@@ -1,7 +1,7 @@
 -- build and push image:
 
     % docker build --platform linux/amd64 -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.28.amd .
-    % docker login -u tira-user-john-boy-walton -pg-4s1ebNLy1iqa2GwH7L registry.webis.de
+    % docker login -u ... registry.webis.de
     % docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.28.amd
 
 -- run locally:
