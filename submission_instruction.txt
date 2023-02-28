@@ -1,12 +1,17 @@
 -- build and push image:
 
-    % docker build --platform linux/amd64 -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.27.amd .
-    % docker login ...
-    % docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.27.amd
+    % docker build --platform linux/amd64 -t registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.28.amd .
+    % docker login -u tira-user-john-boy-walton -pg-4s1ebNLy1iqa2GwH7L registry.webis.de
+    % docker push registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.28.amd
 
 -- run locally:
 
-    % docker run -d -p 80:80 --platform linux/amd64 registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.27.amd
+    % docker run -d -p 80:80 --platform linux/amd64 registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.28.amd
+
+-- push to Hub:
+
+    % docker tag registry.webis.de/code-research/tira/tira-user-john-boy-walton/websemble:0.28.amd maxschmaltz/websemble:0.28.amd
+    % docker push maxschmaltz/websemble:0.28.amd
 
 -- commands on TIRA:
 

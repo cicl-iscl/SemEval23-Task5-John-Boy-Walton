@@ -6,9 +6,7 @@
     "training_kwargs": {
         "output_dir": "flow/checkpoints/bart-base-webis22",
         "logging_dir": "flow/log/bart-base-webis22",
-        "num_train_epochs": 25,
-        "eval_steps": 500,
-        "save_steps": 5000
+        "num_train_epochs": 12.5
     },
     "trainer_kwargs": {},
     "test_batch_size": 8,

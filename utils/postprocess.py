@@ -58,7 +58,8 @@ def postprocess_qa(
         n_best_size=20,
         min_answer_length=1,
         max_answer_length=20,
-        top_k=5
+        top_k=5,
+        remove_overlapping=True
     ):
     
     meaningful_pattern = re.compile('(\w|\d)+')
@@ -145,41 +146,53 @@ def postprocess_qa(
 
 
         allocated = set()
+
+        if remove_overlapping:
         
-        predictions = []
-        for prelim_prediction in prelim_predictions:
-            prelim_prediction = process_prediction(prelim_prediction)
-            if prelim_prediction is None: continue
-            offsets = prelim_prediction['offsets']
-            prelim_range = set(range(*offsets))
-            overlapping_offsets = allocated & prelim_range
-            # no overlapping => can add if passes the filters
-            if not len(overlapping_offsets):
+            predictions = []
+            for prelim_prediction in prelim_predictions:
+                prelim_prediction = process_prediction(prelim_prediction)
+                if prelim_prediction is None: continue
+                offsets = prelim_prediction['offsets']
+                prelim_range = set(range(*offsets))
+                overlapping_offsets = allocated & prelim_range
+                # no overlapping => can add if passes the filters
+                if not len(overlapping_offsets):
+                    predictions.append(prelim_prediction)
+                    allocated.update(prelim_range)
+                # overlapping => keep the shortest / the longest chunk
+                else:
+                    for pred in predictions:
+                        offsets = pred['offsets']
+                        pred_range = set(range(*offsets))
+                        overlapping_offsets = prelim_range & pred_range
+                        if len(overlapping_offsets):
+                            # keep the longest chunk
+                            if (label == 'passage') and (len(prelim_range) > len(pred_range)):
+                                # add new indices
+                                allocated.update(prelim_range)
+                                predictions.remove(pred)
+                                predictions.append(prelim_prediction)
+                                break
+                            # keep the shortest chunk (upd: doesn't work)
+                            # elif (label != 'passage') and (len(prelim_range) < len(pred_range)):
+                            #     # remove excessive indices
+                            #     difference = pred_range - prelim_range
+                            #     allocated -= difference
+                            #     predictions.remove(pred)
+                            #     predictions.append(prelim_prediction)
+                            #     counter += 1; break
+                if len(predictions) == n_best_size: break
+
+        else:
+
+            predictions = []
+            for prelim_prediction in prelim_predictions:
+                prelim_prediction = process_prediction(prelim_prediction)
+                if prelim_prediction is None: continue
                 predictions.append(prelim_prediction)
-                allocated.update(prelim_range)
-            # overlapping => keep the shortest / the longest chunk
-            else:
-                for pred in predictions:
-                    offsets = pred['offsets']
-                    pred_range = set(range(*offsets))
-                    overlapping_offsets = prelim_range & pred_range
-                    if len(overlapping_offsets):
-                        # keep the longest chunk
-                        if (label == 'passage') and (len(prelim_range) > len(pred_range)):
-                            # add new indices
-                            allocated.update(prelim_range)
-                            predictions.remove(pred)
-                            predictions.append(prelim_prediction)
-                            break
-                        # keep the shortest chunk (upd: doesn't work)
-                        # elif (label != 'passage') and (len(prelim_range) < len(pred_range)):
-                        #     # remove excessive indices
-                        #     difference = pred_range - prelim_range
-                        #     allocated -= difference
-                        #     predictions.remove(pred)
-                        #     predictions.append(prelim_prediction)
-                        #     counter += 1; break
-            if len(predictions) == n_best_size: break
+                if len(predictions) == n_best_size: break
+
 
 
         # append 'smoothing' pred in case we have no non-null ones

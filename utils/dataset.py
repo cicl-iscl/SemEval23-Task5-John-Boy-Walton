@@ -42,14 +42,14 @@ def compose_datasets(dir, preprocess_train=True, preprocess_test=True, mode='tra
 
         else: X_train = None
             
-        if os.path.exists(train_path):
+        if os.path.exists(dev_path):
 
             X_dev = Dataset.from_pandas(
-                squad_format(train_path)
+                squad_format(dev_path)
             )
             X_dev = X_dev.map(from_squad, batched=True)
 
-        else: X_dev = None, None
+        else: X_dev = None
 
     else:
         X_train = Dataset.from_json(train_path) if os.path.exists(train_path) else None

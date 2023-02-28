@@ -78,9 +78,8 @@ def run(
         X_dev=None,
         X_test=None,
         mode='test', # 'train' / 'test' 
-        use_summarization=True,
+        use_summarization=False,
         summarize_only_on_cuda=True,
-        # batch_size=8,
         save_datasets=False,
         saved_datasets_dir='webis22_prepared',
         **postprocess_qargs
@@ -285,8 +284,8 @@ def run(
 
         answers = []
 
-        pred_spoilers_ = {entry['id']: entry['prediction_texts'] for entry in pred_spoilers}
         pred_labels_ = {entry['id']: entry['label'] for entry in pred_labels}
+        if subtask == 2: pred_spoilers_ = {entry['id']: entry['prediction_texts'] for entry in pred_spoilers}
 
         def find_by_id(preds, id):
             id_idx = list(preds.keys()).index(id)
@@ -294,10 +293,11 @@ def run(
 
         for id in X_test['id']:
 
-            top_k = find_by_id(pred_spoilers_, id)
             label = find_by_id(pred_labels_, id)
-            final_spoiler = postprocess_top_k(top_k, label)
-            # final_spoiler = top_k[0]
+            if subtask == 2:
+                top_k = find_by_id(pred_spoilers_, id)
+                final_spoiler = postprocess_top_k(top_k, label)
+                # final_spoiler = top_k[0]
 
             answer = {
                 'uuid': id,
@@ -337,7 +337,7 @@ def main():
     parser.add_argument('-p', '--preprocess_mode', required=False, default='1', choices=['0', '1', '2'])
     parser.add_argument('-m', '--mode', required=False, default='test', choices=['train', 'test'])
     parser.add_argument('-s', '--summarize', required=False, default='False', choices=['True', 'False'])
-    parser.add_argument('-oc', '--summarize_only_on_cuda', required=True, default='True', choices=['True', 'False'])
+    parser.add_argument('-oc', '--summarize_only_on_cuda', required=False, default='True', choices=['True', 'False'])
     parser.add_argument('-save', '--save_datasets', required=False, default='False', choices=['True', 'False'])
     parser.add_argument('-save_dir', '--saved_datasets_dir', required=False, default='./webis22_summarized')
 
